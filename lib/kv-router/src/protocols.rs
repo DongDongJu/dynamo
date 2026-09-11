@@ -878,7 +878,7 @@ impl StorageTier {
     pub fn from_kv_medium(medium: &str) -> Option<Self> {
         match medium {
             "GPU" | "DEVICE" => Some(Self::Device),
-            "CPU" | "CPU_PINNED" | "CPU_TIER1" => Some(Self::HostPinned),
+            "CPU" | "cpu" | "CPU_PINNED" | "CPU_TIER1" => Some(Self::HostPinned),
             "CPU_TIER2" | "DISK" | "NVME" | "STORAGE" => Some(Self::Disk),
             "EXTERNAL" | "NETWORK" | "REMOTE" | "SHARED" => Some(Self::External),
             _ => None,
@@ -1839,6 +1839,14 @@ mod tests {
     use super::*;
     use rstest::rstest;
     use serde_json;
+
+    #[test]
+    fn lmcache_lowercase_cpu_medium_maps_to_host_pinned() {
+        assert_eq!(
+            StorageTier::from_kv_medium("cpu"),
+            Some(StorageTier::HostPinned)
+        );
+    }
 
     // Temporary N/N-1 fixtures. Remove this module when domainless RouterEvent
     // is outside the supported mixed-version window.
